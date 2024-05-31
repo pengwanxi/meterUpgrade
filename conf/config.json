@@ -1,0 +1,16 @@
+{
+    "appname": "meterUpgrade",
+    "uartConfigInfo": {
+        "mountname": "/dev/ttyS7",
+        "baudrate": 9600,
+        "databit": 8,
+        "stopbit": 1,
+        "parity": "E",
+        "interval": 300
+    },
+    "meterAddr": [
+        "000000000003",
+        "000000000001",
+        "000000000004"
+    ]
+}
