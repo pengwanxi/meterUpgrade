@@ -17,7 +17,7 @@ executable_path="/home/sysadm/meterUpgrade/bin"
 cd "$executable_path" || exit
 
 export LD_LIBRARY_PATH=/home/sysadm/meterUpgrade/lib:$LD_LIBRARY_PATH
-chmod +x "$executable_path"
+chmod +x meterUpgrade
 
 
 # 启动程序并传递参数

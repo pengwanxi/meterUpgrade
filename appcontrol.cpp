@@ -174,7 +174,6 @@ void AppControl::start()
     for (int i = 0; i < meterInfo.size(); i++)
     {
         memcpy(m_meterInfo[i].addr, meterInfo[i].addr, sizeof(meterInfo[i].addr));
-
         m_meterInfo[i].phase = meterInfo[i].phase;
         zlog_info(m_logc, "m_meterInfo[i].phase : %d  meterInfo[i].phase : %d", m_meterInfo[i].phase, meterInfo[i].phase);
         m_meterInfo[i].protoType = meterInfo[i].protoType;
@@ -186,9 +185,9 @@ void AppControl::start()
         {
             continue;
         }
-        if (m_meterInfo[i].phase == 0)
+        if (m_meterInfo[i].phase <= 0)
         {
-            zlog_debug(m_logc, "phase : [ %d ],phase not suport ! can`t update");
+            zlog_debug(m_logc, "phase not suport ! can`t update");
             zlog_debug_print(m_logc, "addr : [%s]  update failed! \n\n", m_meterInfo[i].addr, sizeof(m_meterInfo[i].addr));
             continue;
         }
