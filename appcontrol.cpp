@@ -8,7 +8,7 @@
 #include <thread>
 #include <iostream>
 
-#define UPDATE_BLOCK 150
+#define UPDATE_BLOCK 180
 AppControl *AppControl::m_pApp = NULL;
 
 AppControl::AppControl(std::string fileName, std::string fileVersion)
@@ -163,7 +163,7 @@ void AppControl::start()
     len = GW1376AFN10Fn02down(buf, index);
     m_serialPort->sendData(buf, len);
     zlog_print(m_logc, "send buf [ %s ] ", buf, len);
-    usleep(m_interval * 1000);
+    usleep(m_interval * 1000 * 2);
     memset(buf, 0, sizeof(buf));
     len = m_serialPort->receiveData(buf, sizeof(buf));
     zlog_print(m_logc, "recv buf [ %s ] ", buf, len);
@@ -188,13 +188,12 @@ void AppControl::start()
         }
         if (m_meterInfo[i].phase == 0)
         {
-
-            zlog_debug(m_logc, "phase not suport ! can`t update");
-            zlog_debug_print(m_logc, "addr : [%s]  update failed!", m_meterInfo[i].addr, sizeof(m_meterInfo[i].addr));
+            zlog_debug(m_logc, "phase : [ %d ],phase not suport ! can`t update");
+            zlog_debug_print(m_logc, "addr : [%s]  update failed! \n\n", m_meterInfo[i].addr, sizeof(m_meterInfo[i].addr));
             continue;
         }
-        zlog_debug(m_logc, " phase : [ %d ] , can be upgraded", m_meterInfo[i].phase);
-        zlog_debug_print(m_logc, "addr : [ %s ] start update!", m_meterInfo[i].addr, sizeof(m_meterInfo[i].addr));
+        zlog_debug(m_logc, "phase : [ %d ] , can be upgraded", m_meterInfo[i].phase);
+        zlog_debug_print(m_logc, "addr : [ %s] start update!", m_meterInfo[i].addr, sizeof(m_meterInfo[i].addr));
 
         // 升级开始
         setCurrent(0);
@@ -223,7 +222,10 @@ void AppControl::start()
             zlog_print(m_logc, "recv buf [ %s ] ", buf, len);
             if (len > 0)
             {
-                protocol_gw1376_2_process_cco_buf((char *)buf, len);
+                if (protocol_gw1376_2_process_cco_buf((char *)buf, len) < 0)
+                {
+                    continue;
+                }
                 PROTOCOL_GW1376_2_APPLY_REGION *papply_region =
                     protocol_gw1376_2_recv_apply_region_get(get_pdata());
                 if (dlt645_07_process_frame((unsigned char *)papply_region->unit_buf + 2, papply_region->unit_len - 2) == false)
@@ -240,8 +242,8 @@ void AppControl::start()
 
                 m_meterInfo[i].appVersion = gerAppVersion();
                 m_meterInfo[i].update = true;
-                // zlog_debug(m_logc, "update after version : [%s]", m_meterInfo[i].appVersion.c_str());
-                zlog_debug_print(m_logc, "addr : [%s]  update successed!", m_meterInfo[i].addr, sizeof(m_meterInfo[i].addr));
+                zlog_debug(m_logc, "update after version : [ %s ]", m_meterInfo[i].appVersion.c_str());
+                zlog_debug_print(m_logc, "addr : [ %s]  update successed! \n\n", m_meterInfo[i].addr, sizeof(m_meterInfo[i].addr));
 
                 break;
             }

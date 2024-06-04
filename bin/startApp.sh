@@ -18,12 +18,11 @@ cd "$executable_path" || exit
 
 export LD_LIBRARY_PATH=/home/sysadm/meterUpgrade/lib:$LD_LIBRARY_PATH
 chmod +x "$executable_path"
-./meterUpgrade
 
 
 # 启动程序并传递参数
-echo "启动程序: myprogram $param2 $param3"
-sudo ./meterUpgrade "$param2" "$param3"
+echo "启动程序: ./meterUpgrade $param2 $param3"
+sudo nohup ./meterUpgrade "$param2" "$param3" > /dev/null 2>&1 &
 
 # 检查程序是否成功启动
 if [ $? -ne 0 ]; then

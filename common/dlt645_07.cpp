@@ -378,11 +378,11 @@ static bool dlt645_07_update(PROTOCOL_DLT645_07_DATA *pdata)
         psend->data[len++] = HIBYTE(block);
 
         char ver[10];
-        snprintf(ver, 9, "VER %s", fileOperateInfo.fileVersion.c_str());
+        snprintf(ver, 9, "SV%s", fileOperateInfo.fileVersion.c_str());
         memcpydir(&psend->data[len], ver, 8, DIR_REVERSE);
         len += 8;
 
-        zlog_info(m_logc, "name=%s size=%lu block=%d ver=%s\n", fileOperateInfo.fileName.c_str(), size, block, ver);
+        zlog_debug(m_logc, "name=%s size=%lu block=%d ver=%s", fileOperateInfo.fileName.c_str(), size, block, ver);
     }
     break;
     case UPDATE_STEP_FILE:
@@ -411,13 +411,13 @@ static bool dlt645_07_update(PROTOCOL_DLT645_07_DATA *pdata)
         psend->data[len++] = HIBYTE(LOWORD(crc));
         psend->data[len++] = LOBYTE(HIWORD(crc));
         psend->data[len++] = HIBYTE(HIWORD(crc));
-        zlog_info(m_logc, "开始校验");
+        zlog_info(m_logc, "开始校验CRC");
     }
     break;
 
     case UPDATE_STEP_STATE:
     {
-        zlog_info(m_logc, "读状态");
+        zlog_info(m_logc, "读传输块状态字");
     }
     break;
 

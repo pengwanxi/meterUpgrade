@@ -6,7 +6,7 @@
         "databit": 8,
         "stopbit": 1,
         "parity": "E",
-        "interval": 300
+        "interval": 800
     },
     "meterAddr": [
         "000000000003",

@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        printf("./meterUpgrade 文件名 版本号 \n");
+        // printf("./meterUpgrade 文件名 版本号 \n");
         return 0;
     }
 
