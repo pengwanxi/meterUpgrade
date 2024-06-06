@@ -175,8 +175,21 @@ void AppControl::start()
     {
         memcpy(m_meterInfo[i].addr, meterInfo[i].addr, sizeof(meterInfo[i].addr));
         m_meterInfo[i].phase = meterInfo[i].phase;
-        zlog_info(m_logc, "m_meterInfo[i].phase : %d  meterInfo[i].phase : %d", m_meterInfo[i].phase, meterInfo[i].phase);
         m_meterInfo[i].protoType = meterInfo[i].protoType;
+
+        char tmpAddr[13] = {0};
+        for (int k = 0; k < 6; k++)
+        {
+            sprintf(tmpAddr + 2 * k, "%02x", m_meterInfo[i].addr[k]);
+        }
+        if (m_meterInfo[i].phase > 0)
+        {
+            zlog_debug(m_logc, "addr : [ %s ] , phase : [ %d ] , can be upgrade", tmpAddr, m_meterInfo[i].phase);
+        }
+        else
+        {
+            zlog_debug(m_logc, "addr : [ %s ] , phase : [ %d ] , can`t upgrade", tmpAddr, m_meterInfo[i].phase);
+        }
     }
 
     for (int i = 0; i < m_meterInfo.size(); i++)
