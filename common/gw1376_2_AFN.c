@@ -6,7 +6,8 @@
 
 static zlog_category_t *m_zlogA = NULL;
 
-std::vector<METER_INFO> meterInfoVector;
+// std::map<std::string, METER_INFO> m_meterInfoMap;
+std::map<std::string, METER_INFO> *m_meterInfoMap = NULL;
 
 static GW103762DataTypeFunc_t gw103762DataTypeFunc[0xff] = {
     {GW1376_2_DATA_TYPE_ROUTE_ADD_SUBNODE, protocol_gw1376_AFN11_Fn01_up, NULL},
@@ -17,6 +18,7 @@ static GW103762DataTypeFunc_t gw103762DataTypeFunc[0xff] = {
     {GW1376_2_DATA_TYPE_TRANS_DATA, protocol_gw1376_AFN02_Fn01_up, NULL},
     {GW1376_2_DATA_TYPE_READ_MAIN_NODE, protocol_gw1376_AFN03_Fn04_up, NULL},
     {GW1376_2_DATA_TYPE_WRITE_MAIN_NODE, protocol_gw1376_AFN05_Fn01_up, NULL},
+    {GW1376_2_DATA_TYPE_ROUTE_READ_NETWORK_TOPO_INFO, protocol_gw1376_AFN10_Fn21_up, NULL},
 
 };
 
@@ -179,9 +181,6 @@ int protocol_gw1376_AFN03_Fn04_down(PROTOCOL_GW1376_2_DATA *pdata, unsigned char
     int bufSize;
     bufSize = protocol_gw1376_pack_frame_data((char *)buffer, &bufSize, pdata);
 
-    // CCOUartSend(buf, bufSize);
-
-    // zlog_print(m_zlogA, "Send gw10376.2 data frame AFN=[03] Fn = [04] : [%s]", buf, bufSize);
     return bufSize;
 }
 /*
@@ -532,22 +531,41 @@ int protocol_gw1376_AFN10_Fn02_up(PROTOCOL_GW1376_2_DATA *pdata, int (*MqttPubli
 
     for (i = 0; i < num; i++)
     {
+
         METER_INFO meterInfo;
-
         CopyArray(unitBufTemp + i * 8, (char *)meterInfo.addr, 6);
-
         meterInfo.phase = (unitBufTemp[i * 8 + 7]) & 0b00000111;          // 获取相位
         meterInfo.protoType = (unitBufTemp[i * 8 + 7] >> 3) & 0b00000111; // 获取协议类型
-        meterInfoVector.push_back(meterInfo);
-        // zlog_info(m_logc, "meterInfo[i].phase : %d", meterInfo.phase);
-        // printf("extractedBits : [%d] , protoType : [%d] \n", extractedBits, proType);
+
+        char msg[13] = {0};
+        hexArrayToString((char *)meterInfo.addr, 6, msg);
+        std::string addrkey = msg;
+        auto mInfo = m_meterInfoMap->find(addrkey);
+        if (mInfo != m_meterInfoMap->end())
+        {
+            // zlog_info(m_zlogA, "addr : [%s]", msg);
+            mInfo->second.phase = meterInfo.phase;
+            mInfo->second.protoType = meterInfo.protoType;
+        }
+        // hdzlog_info(meterInfo.addr, 6);
+        //  zlog_info(m_logc, "meterInfo[i].phase : %d", meterInfo.phase);
+        //   meterInfoVector.push_back(meterInfo);
+        //    zlog_info(m_logc, "meterInfo[i].phase : %d", meterInfo.phase);
+        //    printf("extractedBits : [%d] , protoType : [%d] \n", extractedBits, proType);
     }
     return 0;
 }
 
-std::vector<METER_INFO> GetMeterInfo()
+std::map<std::string, METER_INFO> *GetMeterInfo()
 {
-    return meterInfoVector;
+    return m_meterInfoMap;
+}
+
+void SetMeterInfo(std::map<std::string, METER_INFO> *info)
+{
+
+    m_meterInfoMap = info;
+    // return &m_meterInfoMap;
 }
 
 /*
@@ -662,5 +680,97 @@ int protocol_gw1376_AFN11_Fn02_up(PROTOCOL_GW1376_2_DATA *pdata, int (*MqttPubli
             return -1;
         }
     }*/
+    return 0;
+}
+
+/*
+ * 查询网络拓扑信息
+ */
+int GW1376AFN10Fn21down(unsigned char *buffer, int bufferLen)
+{
+    PROTOCOL_GW1376_2_DATA *protoData = get_pdata();
+    return protocol_gw1376_AFN10_Fn21_down(protoData, buffer, bufferLen);
+}
+int protocol_gw1376_AFN10_Fn21_down(PROTOCOL_GW1376_2_DATA *pdata, unsigned char *buffer, int bufferLen)
+{
+    pdata->state = GW1376_2_DATA_TYPE_ROUTE_READ_NETWORK_TOPO_INFO;
+    PROTOCOL_GW1376_2_APPLY_REGION regin;
+    regin.AFN = 0x10;
+    regin.Fn = 21;
+    memcpy(regin.unit_buf, buffer, bufferLen);
+    regin.unit_len = bufferLen;
+    protoco_gw1376_2_cco_down_unit(pdata, &regin);
+    int bufSize;
+    memset(buffer, 0, sizeof(buffer));
+    return protocol_gw1376_pack_frame_data((char *)buffer, &bufSize, pdata);
+}
+
+/*
+ * 查询网络拓扑信息  串口返回数据处理
+ */
+int protocol_gw1376_AFN10_Fn21_up(PROTOCOL_GW1376_2_DATA *pdata, int (*MqttPublish)(unsigned char *buffer, int bufferLen))
+{
+    PROTOCOL_GW1376_2_RECV_DATA *precv = protocol_gw1376_2_recv_data_get(pdata);
+    PROTOCOL_GW1376_2_APPLY_REGION *papply_region =
+        protocol_gw1376_2_recv_apply_region_get(pdata);
+    int i, j;
+
+    if (papply_region->AFN != 0x10 || papply_region->Fn != 21)
+    {
+        zlog_info(m_zlogA, "%s AFN or Fn error", __FUNCTION__);
+        // comm_data_set_step(pcomm_data, GW1376_2_DATA_TYPE_PARAM_INIT);
+        return -1;
+    }
+
+    u16_t total = MAKEWORD(papply_region->unit_buf[0], papply_region->unit_buf[1]);
+    u16_t startNum = MAKEWORD(papply_region->unit_buf[2], papply_region->unit_buf[3]);
+
+    u08_t num = papply_region->unit_buf[4];
+    zlog_info(m_zlogA, "total : [%d] startNum : [%d]  num : [%d]", total, startNum, num);
+
+    if (num == 0)
+    {
+        zlog_info(m_zlogA, "无节点应答");
+        return 0;
+    }
+
+    char *unitBufTemp = NULL;
+    unitBufTemp = papply_region->unit_buf + 5;
+
+    char pubBuffer[6] = {0};
+
+    for (auto it = m_meterInfoMap->begin(); it != m_meterInfoMap->end(); ++it)
+    {
+        it->second.topoStatus = false;
+    }
+
+    for (i = 0; i < num; i++)
+    {
+
+        METER_INFO meterInfo;
+        CopyArray(unitBufTemp + i * 11, (char *)meterInfo.addr, 6);
+
+        // meterInfo.phase = (unitBufTemp[i * 8 + 7]) & 0b00000111;      // 获取相位
+        // meterInfo.protoType = (unitBufTemp[i * 8 + 7] >> 3) & 0b00000111; // 获取协议类型
+
+        char msg[13] = {0};
+        hexArrayToString((char *)meterInfo.addr, 6, msg);
+        std::string addrkey = msg;
+        auto mInfo = m_meterInfoMap->find(addrkey);
+        // zlog_info(m_zlogA, "查找的LTU地址 : [ %s ] ", addrkey.c_str());
+        if (mInfo != m_meterInfoMap->end())
+        {
+            zlog_info(m_zlogA, "LTU地址 : [ %s ]  可以升级", addrkey.c_str());
+            // mInfo->second.phase = meterInfo.phase;
+            // mInfo->second.protoType = meterInfo.protoType;
+            // meterInfo.topoStatus = true;
+            mInfo->second.topoStatus = true;
+        }
+        // hdzlog_info(meterInfo.addr, 6);
+        //  zlog_info(m_logc, "meterInfo[i].phase : %d", meterInfo.phase);
+        //   meterInfoVector.push_back(meterInfo);
+        //    zlog_info(m_logc, "meterInfo[i].phase : %d", meterInfo.phase);
+        //    printf("extractedBits : [%d] , protoType : [%d] \n", extractedBits, proType);
+    }
     return 0;
 }

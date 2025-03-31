@@ -1,0 +1,84 @@
+2024-05-29 16:12:53.961 INFO   main.cpp:24 - update file name : startApp.sh
+2024-05-29 16:12:53.961 INFO   main.cpp:27 - update file version : 1
+2024-05-29 16:12:53.961 INFO   appcontrol.cpp:158 - begin read configfile
+2024-05-29 16:12:53.961 INFO   appcontrol.cpp:164 - config is /home/pengwx/Code/meterUpgrade/conf/config.json 
+2024-05-29 16:12:53.961 INFO   appcontrol.cpp:203 - m_appName is meterUpgrade 
+2024-05-29 16:12:53.961 INFO   appcontrol.cpp:216 - m_serialPort->portName is /dev/ttyS7 
+2024-05-29 16:12:53.961 INFO   appcontrol.cpp:221 - m_serialPort->baudRate is 115200 
+2024-05-29 16:12:53.961 INFO   appcontrol.cpp:226 - m_serialPort->dataBit is 8 
+2024-05-29 16:12:53.961 INFO   appcontrol.cpp:231 - m_serialPort->stopBit is 1 
+2024-05-29 16:12:53.961 INFO   appcontrol.cpp:236 - m_serialPort->parity is E 
+2024-05-29 16:12:53.961 INFO   appcontrol.cpp:241 - m_interval is 300 
+2024-05-29 16:12:53.961 INFO   appcontrol.cpp:286 - meterInfo.addr = [00 00 00 00 00 03 ]
+2024-05-29 16:12:53.961 INFO   appcontrol.cpp:262 - meterInfo.appVersion = [0], meterInfo.update = [0]
+2024-05-29 16:12:53.961 ERROR  appcontrol.cpp:39 - open uart error!
+2024-05-29 16:12:53.961 ERROR  main.cpp:33 - init error 
+2024-05-29 16:13:21.735 INFO   main.cpp:24 - update file name : startApp.sh
+2024-05-29 16:13:21.735 INFO   main.cpp:27 - update file version : 1
+2024-05-29 16:13:21.735 INFO   appcontrol.cpp:158 - begin read configfile
+2024-05-29 16:13:21.735 INFO   appcontrol.cpp:164 - config is /home/pengwx/Code/meterUpgrade/conf/config.json 
+2024-05-29 16:13:21.735 INFO   appcontrol.cpp:203 - m_appName is meterUpgrade 
+2024-05-29 16:13:21.735 INFO   appcontrol.cpp:216 - m_serialPort->portName is /dev/ttyS7 
+2024-05-29 16:13:21.735 INFO   appcontrol.cpp:221 - m_serialPort->baudRate is 115200 
+2024-05-29 16:13:21.735 INFO   appcontrol.cpp:226 - m_serialPort->dataBit is 8 
+2024-05-29 16:13:21.735 INFO   appcontrol.cpp:231 - m_serialPort->stopBit is 1 
+2024-05-29 16:13:21.735 INFO   appcontrol.cpp:236 - m_serialPort->parity is E 
+2024-05-29 16:13:21.735 INFO   appcontrol.cpp:241 - m_interval is 300 
+2024-05-29 16:13:21.735 INFO   appcontrol.cpp:286 - meterInfo.addr = [00 00 00 00 00 03 ]
+2024-05-29 16:13:21.735 INFO   appcontrol.cpp:262 - meterInfo.appVersion = [0], meterInfo.update = [0]
+2024-05-29 16:13:21.735 ERROR  appcontrol.cpp:45 - config uart error!
+2024-05-29 16:13:21.735 ERROR  main.cpp:33 - init error 
+2024-05-29 16:14:04.826 INFO   main.cpp:24 - update file name : startApp.sh
+2024-05-29 16:14:04.826 INFO   main.cpp:27 - update file version : 1
+2024-05-29 16:14:04.826 INFO   appcontrol.cpp:158 - begin read configfile
+2024-05-29 16:14:04.826 INFO   appcontrol.cpp:164 - config is /home/pengwx/Code/meterUpgrade/conf/config.json 
+2024-05-29 16:14:04.826 INFO   appcontrol.cpp:203 - m_appName is meterUpgrade 
+2024-05-29 16:14:04.826 INFO   appcontrol.cpp:216 - m_serialPort->portName is /dev/ttyUSB0 
+2024-05-29 16:14:04.826 INFO   appcontrol.cpp:221 - m_serialPort->baudRate is 9600 
+2024-05-29 16:14:04.826 INFO   appcontrol.cpp:226 - m_serialPort->dataBit is 8 
+2024-05-29 16:14:04.826 INFO   appcontrol.cpp:231 - m_serialPort->stopBit is 1 
+2024-05-29 16:14:04.826 INFO   appcontrol.cpp:236 - m_serialPort->parity is E 
+2024-05-29 16:14:04.826 INFO   appcontrol.cpp:241 - m_interval is 300 
+2024-05-29 16:14:04.826 INFO   appcontrol.cpp:286 - meterInfo.addr = [00 00 00 00 00 03 ]
+2024-05-29 16:14:04.826 INFO   appcontrol.cpp:262 - meterInfo.appVersion = [0], meterInfo.update = [0]
+2024-05-29 16:14:04.884 INFO   appcontrol.cpp:85 - m_fileSize : 690
+2024-05-29 16:14:04.884 INFO   gw1376_2_public.c:549 - protocol_gw1376_pack_user_data 0
+2024-05-29 16:14:04.884 INFO   gw1376_2_public.c:662 - protocol_gw1376_pack_frame_data 0 23
+2024-05-29 16:14:04.884 INFO   appcontrol.cpp:286 - send buf [ 68 17 00 00 00 00 00 00 00 01 11 01 00 01 03 00 00 00 00 00 02 19 16  ] 
+2024-05-29 16:14:05.387 INFO   appcontrol.cpp:286 - recv buf [  ] 
+2024-05-29 16:14:05.387 INFO   gw1376_2_public.c:549 - protocol_gw1376_pack_user_data 0
+2024-05-29 16:14:05.387 INFO   gw1376_2_public.c:662 - protocol_gw1376_pack_frame_data 0 23
+2024-05-29 16:14:05.387 INFO   appcontrol.cpp:286 - send buf [ 68 17 00 00 00 00 00 00 00 02 11 01 00 01 03 00 00 00 00 00 02 1a 16  ] 
+2024-05-29 16:14:05.907 INFO   appcontrol.cpp:286 - recv buf [  ] 
+2024-05-29 16:14:05.907 INFO   gw1376_2_public.c:549 - protocol_gw1376_pack_user_data 0
+2024-05-29 16:14:05.907 INFO   gw1376_2_public.c:662 - protocol_gw1376_pack_frame_data 0 23
+2024-05-29 16:14:05.907 INFO   appcontrol.cpp:286 - send buf [ 68 17 00 00 00 00 00 00 00 03 11 01 00 01 03 00 00 00 00 00 02 1b 16  ] 
+2024-05-29 16:14:06.423 INFO   appcontrol.cpp:286 - recv buf [  ] 
+2024-05-29 16:14:06.423 INFO   gw1376_2_public.c:549 - protocol_gw1376_pack_user_data 0
+2024-05-29 16:14:06.423 INFO   gw1376_2_public.c:662 - protocol_gw1376_pack_frame_data 0 23
+2024-05-29 16:14:06.423 INFO   appcontrol.cpp:286 - send buf [ 68 17 00 00 00 00 00 00 00 04 11 01 00 01 03 00 00 00 00 00 02 1c 16  ] 
+2024-05-29 16:15:42.211 INFO   main.cpp:24 - update file name : startApp.sh
+2024-05-29 16:15:42.211 INFO   main.cpp:27 - update file version : 1
+2024-05-29 16:15:42.211 INFO   appcontrol.cpp:158 - begin read configfile
+2024-05-29 16:15:42.211 INFO   appcontrol.cpp:164 - config is /home/pengwx/Code/meterUpgrade/conf/config.json 
+2024-05-29 16:15:42.211 INFO   appcontrol.cpp:203 - m_appName is meterUpgrade 
+2024-05-29 16:15:42.212 INFO   appcontrol.cpp:216 - m_serialPort->portName is /dev/ttyUSB0 
+2024-05-29 16:15:42.212 INFO   appcontrol.cpp:221 - m_serialPort->baudRate is 9600 
+2024-05-29 16:15:42.212 INFO   appcontrol.cpp:226 - m_serialPort->dataBit is 8 
+2024-05-29 16:15:42.212 INFO   appcontrol.cpp:231 - m_serialPort->stopBit is 1 
+2024-05-29 16:15:42.212 INFO   appcontrol.cpp:236 - m_serialPort->parity is E 
+2024-05-29 16:15:42.212 INFO   appcontrol.cpp:241 - m_interval is 300 
+2024-05-29 16:15:42.212 INFO   appcontrol.cpp:286 - meterInfo.addr = [00 00 00 00 00 03 ]
+2024-05-29 16:15:42.212 INFO   appcontrol.cpp:262 - meterInfo.appVersion = [0], meterInfo.update = [0]
+2024-05-29 16:15:42.257 INFO   appcontrol.cpp:85 - m_fileSize : 690
+2024-05-29 16:15:42.257 INFO   gw1376_2_public.c:549 - protocol_gw1376_pack_user_data 0
+2024-05-29 16:15:42.257 INFO   gw1376_2_public.c:662 - protocol_gw1376_pack_frame_data 0 23
+2024-05-29 16:15:42.257 INFO   appcontrol.cpp:286 - send buf [ 68 17 00 00 00 00 00 00 00 01 11 01 00 01 03 00 00 00 00 00 02 19 16  ] 
+2024-05-29 16:15:42.767 INFO   appcontrol.cpp:286 - recv buf [ 68 15 00 8a 00 00 40 00 00 01 00 01 00 ff ff ff ff 00 00 c8 16  ] 
+2024-05-29 16:15:42.767 INFO   gw1376_2_public.c:549 - protocol_gw1376_pack_user_data 0
+2024-05-29 16:15:42.767 INFO   gw1376_2_public.c:662 - protocol_gw1376_pack_frame_data 0 23
+2024-05-29 16:15:42.767 INFO   appcontrol.cpp:286 - send buf [ 68 17 00 00 00 00 00 00 00 02 11 01 00 01 03 00 00 00 00 00 02 1a 16  ] 
+2024-05-29 16:15:43.268 INFO   appcontrol.cpp:286 - recv buf [ 68 15 00 8a 00 00 40 00 00 02 00 01 00 ff ff ff ff 00 00 c9 16  ] 
+2024-05-29 16:15:43.268 INFO   gw1376_2_public.c:549 - protocol_gw1376_pack_user_data 0
+2024-05-29 16:15:43.268 INFO   gw1376_2_public.c:662 - protocol_gw1376_pack_frame_data 0 23
+2024-05-29 16:15:43.268 INFO   appcontrol.cpp:286 - send buf [ 68 17 00 00 00 00 00 00 00 03 11 01 00 01 03 00 00 00 00 00 02 1b 16  ] 

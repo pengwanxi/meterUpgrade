@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <iostream>
 
 #define MAIN_DEBUG_EN 1
 
@@ -85,15 +86,6 @@ typedef struct
     char parity[10];
     int type;
 } SERIAL_PORT_INFO;
-
-typedef struct
-{
-    unsigned char addr[6];
-    int protoType;          //协议类型
-    int phase;              //相位信息  
-    bool update;            // 升级完成标志
-    std::string appVersion; // 版本号
-} METER_INFO;
 
 typedef std::list<std::string> LISTSTR;
 

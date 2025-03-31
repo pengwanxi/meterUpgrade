@@ -99,4 +99,5 @@ char *get_print_queue(char *out);
 u32_t Get_CRC32(u08_t *buf, u32_t size, u32_t CRC);
 void hexStringToAscii(const char *hexString, int hexStringLen, unsigned char *asciiString);
 
+void hexArrayToString(const char *hexArray, int length, char *outStr);
 #endif /* _GLOBAL_H_ */

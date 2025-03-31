@@ -532,17 +532,17 @@ protocol_gw1376_unpack_user_apply_region(PROTOCOL_GW1376_2_DATA *pdata)
     PROTOCOL_GW1376_2_RECV_DATA *precv = protocol_gw1376_2_recv_data_get(pdata);
     int index = 0;
     PROTOCOL_GW1376_2_APPLY_REGION *papplydata = &precv->apply_region;
-
+    
     papplydata->AFN = precv->apply_data[index];
     index++;
 
     papplydata->Fn = protocol_gw1376_2_cal_fn(precv->apply_data[index],
                                               precv->apply_data[index + 1]);
     index += 2;
-
     papplydata->unit_len = precv->apply_data_len - index;
     if (papplydata->unit_len > 0)
     {
+
         memcpy(papplydata->unit_buf, &precv->apply_data[index],
                papplydata->unit_len);
 

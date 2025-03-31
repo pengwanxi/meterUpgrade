@@ -78,7 +78,27 @@ typedef struct FILE_OPERATE
 	int total;
 	int current;
 	char ver[128];
+	UPDATE_STEP updateStep; // 升级状态
+	bool resStatus;			// 响应状态 正常响应 true 异常响应 false
+	bool resStatusRecord;	// 用于日志打印
 } FileOperateInfo;
+
+typedef struct
+{
+	unsigned char addr[6];
+	std::string name;
+	int protoType;			   // 协议类型
+	int phase;				   // 相位信息
+	bool update;			   // 升级完成标志
+	std::string appVersion;	   // 版本号
+	FileOperateInfo fileOInfo; // 设备对应文件信息
+	bool topoStatus;		   // 拓扑状态
+	int nodeID;				   // 节点标识
+	int proxyNodeID;		   // 代理节点标识
+	int nodeInfo;			   // 节点信息
+
+	bool slaveInfoInit; // 子节点信息初始化
+} METER_INFO;
 
 void setCurrent(int current);
 

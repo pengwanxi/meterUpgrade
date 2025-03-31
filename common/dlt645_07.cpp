@@ -114,21 +114,24 @@ static PROTOCOL_DLT645_07_DATA gs_pdata;
 
 static zlog_category_t *m_logc = NULL;
 
-FileOperateInfo fileOperateInfo;
+FileOperateInfo *fileOperateInfo = NULL;
 
 void setCurrent(int current)
 {
-    fileOperateInfo.current = current;
+    fileOperateInfo->current = current;
 }
 
 void setFileInfo(FileOperateInfo *info)
 {
+    /*
     fileOperateInfo.fileName = info->fileName;
     fileOperateInfo.fileVersion = info->fileVersion;
     fileOperateInfo.fileBlock = info->fileBlock;
     fileOperateInfo.fileSize = info->fileSize;
     fileOperateInfo.current = info->current;
     fileOperateInfo.total = info->total;
+    */
+    fileOperateInfo = info;
 }
 
 void setZlogP(zlog_category_t *zlogp)
@@ -254,22 +257,22 @@ static bool dlt645_07_read_common(PROTOCOL_DLT645_07_DATA *pdata, DWORD dwDI)
 
 void setUpdateStep(UPDATE_STEP update_step)
 {
-    PROTOCOL_DLT645_07_DATA *pdata = get_pdata();
-    pdata->updateStep = update_step;
+    // PROTOCOL_DLT645_07_DATA *pdata = get_pdata();
+    fileOperateInfo->updateStep = update_step;
 }
 
 UPDATE_STEP getUpdateStep()
 {
-    PROTOCOL_DLT645_07_DATA *pdata = get_pdata();
-    return pdata->updateStep;
+    // PROTOCOL_DLT645_07_DATA *pdata = get_pdata();
+    return fileOperateInfo->updateStep;
 }
 
 int currentBuf(u08_t *buf, int &len)
 {
-    unsigned int pos = fileOperateInfo.current * fileOperateInfo.fileBlock;
+    unsigned int pos = fileOperateInfo->current * fileOperateInfo->fileBlock;
     zlog_info(m_logc, "len=%d m_sendByte=%d pos=%d current=%d ", len,
-              fileOperateInfo.fileBlock, pos, fileOperateInfo.current);
-    int l = (int)file_operation_read((const char *)fileOperateInfo.fileName.c_str(), buf, len, &pos);
+              fileOperateInfo->fileBlock, pos, fileOperateInfo->current);
+    int l = (int)file_operation_read((const char *)fileOperateInfo->fileName.c_str(), buf, len, &pos);
 
     /*
     zlog_print(m_logc, "read buf : [%s] ", (char *)buf, l);
@@ -282,7 +285,7 @@ unsigned int getcrc(void)
 {
     int len = 0;
     u32_t crc = 0xffffffff;
-    char *pdata = file_operation_read_malloc((char *)fileOperateInfo.fileName.c_str(), &len);
+    char *pdata = file_operation_read_malloc((char *)fileOperateInfo->fileName.c_str(), &len);
 
     if (NULL == pdata || len <= 0)
     {
@@ -364,43 +367,38 @@ static bool dlt645_07_update(PROTOCOL_DLT645_07_DATA *pdata)
             zlog_info(m_logc, "续传准备");
         }
 
-        memcpydir(&psend->data[len], (void *)fileOperateInfo.fileName.c_str(), 20, DIR_REVERSE);
+        memcpydir(&psend->data[len], (void *)fileOperateInfo->fileName.c_str(), 20, DIR_REVERSE);
         len += 20;
 
-        DWORD size = fileOperateInfo.fileSize;
+        DWORD size = fileOperateInfo->fileSize;
         psend->data[len++] = LOBYTE(LOWORD(size));
         psend->data[len++] = HIBYTE(LOWORD(size));
         psend->data[len++] = LOBYTE(HIWORD(size));
         psend->data[len++] = HIBYTE(HIWORD(size));
 
-        WORD block = fileOperateInfo.fileBlock;
+        WORD block = fileOperateInfo->fileBlock;
         psend->data[len++] = LOBYTE(block);
         psend->data[len++] = HIBYTE(block);
 
         char ver[10];
-        snprintf(ver, 9, "SV%s", fileOperateInfo.fileVersion.c_str());
+        snprintf(ver, 9, "SV%s", fileOperateInfo->fileVersion.c_str());
         memcpydir(&psend->data[len], ver, 8, DIR_REVERSE);
         len += 8;
 
-        zlog_debug(m_logc, "name=%s size=%lu block=%d ver=%s", fileOperateInfo.fileName.c_str(), size, block, ver);
+        zlog_debug(m_logc, "name=%s size=%lu block=%d ver=%s", fileOperateInfo->fileName.c_str(), size, block, ver);
     }
     break;
     case UPDATE_STEP_FILE:
     {
-        u16_t current = fileOperateInfo.current;
+        u16_t current = fileOperateInfo->current;
         // dword2bcd(current, &psend->data[len], 2, DLT645_BCD_REVERSE);
         psend->data[len++] = LOBYTE(current);
         psend->data[len++] = HIBYTE(current);
 
-        int max = fileOperateInfo.fileBlock;
+        int max = fileOperateInfo->fileBlock;
         int size = currentBuf(&psend->data[len], max);
-        // psend->data[len++] = size;
-
-        // zlog_print(m_logc, "read buf : [%s] ", (char *)buf, l);
         len += size;
-
-        zlog_info(m_logc, "共%d帧 , 开始传输第%d帧", fileOperateInfo.total, fileOperateInfo.current + 1);
-        // zlog_info(m_logc, "共%d帧 , 开始传输第%d帧", fileOperateInfo.total, fileOperateInfo.current);
+        zlog_info(m_logc, "共%d帧 , 开始传输第%d帧", fileOperateInfo->total, fileOperateInfo->current + 1);
     }
     break;
 
@@ -431,7 +429,7 @@ static bool dlt645_07_update(PROTOCOL_DLT645_07_DATA *pdata)
 
 char *gerAppVersion()
 {
-    return fileOperateInfo.ver;
+    return fileOperateInfo->ver;
 }
 
 /**
@@ -444,11 +442,15 @@ static bool dlt645_07_process_update(PROTOCOL_DLT645_07_DATA *pdata)
     zlog_info(m_logc, "precv->data[4]=%d", precv->data[4]);
     if (0 == precv->data[4])
     {
-        zlog_info(m_logc, "正常响应");
+        zlog_info(m_logc, " 正常响应");
+        fileOperateInfo->resStatus = true;
+        fileOperateInfo->resStatusRecord = true;
     }
     else
     {
         zlog_info(m_logc, "异常响应");
+        fileOperateInfo->resStatus = false;
+        fileOperateInfo->resStatusRecord = false;
         return false;
     }
 
@@ -461,7 +463,7 @@ static bool dlt645_07_process_update(PROTOCOL_DLT645_07_DATA *pdata)
     break;
     case UPDATE_STEP_FILE:
     {
-        u16_t current = fileOperateInfo.current;
+        u16_t current = fileOperateInfo->current;
         u16_t block = MAKEWORD(precv->data[5], precv->data[6]);
         zlog_info(m_logc, "current : [%d] , block : [%d] ", current, block);
         if (current == block)
@@ -473,9 +475,9 @@ static bool dlt645_07_process_update(PROTOCOL_DLT645_07_DATA *pdata)
             return false;
         }
 
-        fileOperateInfo.current++;
+        fileOperateInfo->current++;
 
-        if (fileOperateInfo.current >= fileOperateInfo.total)
+        if (fileOperateInfo->current >= fileOperateInfo->total)
         {
             setUpdateStep(UPDATE_STEP_STATE);
         }
@@ -515,7 +517,7 @@ static bool dlt645_07_process_update(PROTOCOL_DLT645_07_DATA *pdata)
                         zlog_info(m_logc, "第%d帧状态", current + 1);
                         if (getUpdateStep() == UPDATE_STEP_CONTINUE)
                         {
-                            fileOperateInfo.current = current;
+                            fileOperateInfo->current = current;
                             setUpdateStep(UPDATE_STEP_FILE);
                             return true;
                         }
@@ -536,11 +538,12 @@ static bool dlt645_07_process_update(PROTOCOL_DLT645_07_DATA *pdata)
     }
     break;
     case UPDATE_STEP_VER:
-    {
-        memcpydir(fileOperateInfo.ver, &precv->data[4], 10, DIR_REVERSE);
-        fileOperateInfo.ver[10] = '0';
+    {   
+        memcpydir(fileOperateInfo->ver, &precv->data[4], 10, DIR_REVERSE);
+        // memcpy(fileOperateInfo->ver, &precv->data[4], 10);
+        fileOperateInfo->ver[10] = '0';
         setUpdateStep(UPDATE_STEP_END);
-        zlog_info(m_logc, "update after version : [ %s ]", fileOperateInfo.ver);
+        zlog_info(m_logc, "update after version : [ %s ]", fileOperateInfo->ver);
         return true;
     }
     break;

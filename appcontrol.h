@@ -17,8 +17,11 @@
 
 #include "dlt645_07.h"
 
+#include "cJSON.h"
+
 #define MAXTIMEOUT 60
 #define CONFIGPATH "/home/sysadm/meterUpgrade/conf/"
+#define APP_CFG_JSON "/data/app/breaker/"
 // #define CONFIGPATH "/home/pengwx/Code/meterUpgrade/conf/"
 class AppControl
 {
@@ -39,11 +42,17 @@ public:
 
 private:
     int readConfig();
+    int readBreakerConfig();
+    int app_cfg_parse_devs(cJSON *devs);
     void dealMessage(DATAMESSAGE *message);
 
     void dealMessageThreadFunc();
     void GetFileOperateInfo();
+    void GetSlaveNodeInfo(int addSubnodeNum, int addSubnodeNumYu); // 获取从节点信息
+    void UpdateSlaveInfo(int addSubnodeNum, int addSubnodeNumYu);  // 更新从节点信息
 
+    void GetNetworkTopoStatus(int addSubnodeNum, int addSubnodeNumYu); // 获取网络拓扑信息
+    void UpdateTopoStatus(int addSubnodeNum, int addSubnodeNumYu);     // 更新网络拓扑状态
 private:
     std::string m_devSn;   // 设备sn
     std::string m_appName; // APP名称
@@ -53,12 +62,13 @@ private:
 
     int m_interval;
     SerialPort *m_serialPort;
-    std::vector<METER_INFO> m_meterInfo;
+    std::map<std::string, METER_INFO> m_meterInfoMap;
+    std::vector<METER_INFO> m_addMeterInfo;
     std::string m_fileName;
     std::string m_fileVersion;
     off_t m_fileSize;
-
     FileOperateInfo m_fileOperateInfo;
+    
 };
 
 #endif

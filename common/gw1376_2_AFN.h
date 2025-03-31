@@ -9,6 +9,7 @@
 #include "gw1376_2_data.h"
 #include "zlog.h"
 #include "define.h"
+#include "dlt645_07.h"
 
 #define GW1376_2_AF00_IS_CONFIRM 0x00       // 确认
 #define GW1376_2_AF01_INIT 0X01             // 初始化
@@ -144,8 +145,8 @@ typedef struct GW103762DataActReportFunc
 } GW103762DataActReportFunc_t;
 
 void SetZlogPointer(zlog_category_t *zlog);
-std::vector<METER_INFO> GetMeterInfo();
-
+std::map<std::string, METER_INFO> *GetMeterInfo();
+void SetMeterInfo(std::map<std::string, METER_INFO> *info);
 int protocol_gw1376_TotalAFN_up(PROTOCOL_GW1376_2_DATA *pdata);
 
 /**
@@ -544,4 +545,25 @@ int GW1376AFN14Fn02down(unsigned char *buffer, int bufferLen);
 int protocol_gw1376_AFN14_Fn02_up(PROTOCOL_GW1376_2_DATA *pdata, int (*MqttPublish)(unsigned char *buffer, int bufferLen));
 int protocol_gw1376_AFN14_Fn02_down(PROTOCOL_GW1376_2_DATA *pdata, unsigned char *buffer, int bufferLen);
 
+/**
+ *  \brief AFN10 F21 数据下发
+ *
+ *  查询网络拓扑
+ *
+ *  \param
+ *  \return <0 失败
+ *  \return =0 成功
+ */
+int GW1376AFN10Fn21down(unsigned char *buffer, int bufferLen);
+int protocol_gw1376_AFN10_Fn21_down(PROTOCOL_GW1376_2_DATA *pdata, unsigned char *buffer, int bufferLen);
+/**
+ *  \brief AFN10 F21 数据处理
+ *
+ *  查询网络拓扑
+ *
+ *  \param
+ *  \return <0 失败
+ *  \return =0 成功
+ */
+int protocol_gw1376_AFN10_Fn21_up(PROTOCOL_GW1376_2_DATA *pdata, int (*MqttPublish)(unsigned char *buffer, int bufferLen));
 #endif /* _PROTOCOL_GW1376_2_AFN_H_ */

@@ -22,6 +22,26 @@ void hexStringToAscii(const char *hexString, int hexStringLen, unsigned char *as
     }
 }
 
+// 16进制数组转字符串
+void hexArrayToString(const char *hexArray, int length, char *outStr)
+{
+	if (hexArray == NULL)
+	{
+		return;
+	}
+	const char hexDigits[] = "0123456789ABCDEF"; // 用于将每个字节转换为对应的十六进制字符
+
+	for (int i = 0; i < length; i++)
+	{
+		// 将高四位和低四位转换为对应的十六进制字符
+		outStr[i * 2] = hexDigits[(hexArray[i] >> 4) & 0x0F]; // 高四位
+		outStr[i * 2 + 1] = hexDigits[hexArray[i] & 0x0F];	  // 低四位
+	}
+
+	// 字符串结束符
+	outStr[length * 2] = '\0';
+}
+
 void public_stob(const char *pstr, unsigned char *pbcd, int len)
 {
     unsigned char tmpValue;
